@@ -76,6 +76,8 @@ class Node:
     def reset_solution(self):
         self.set_visited_from(None)
         self.set_distance(math.inf)
+        self.set_a_star_h(math.inf)
+        self.set_a_star_f()
         if self.is_slow_path:
             self.set_color(brown)
         elif self.is_wall == False:
