@@ -1,5 +1,5 @@
 import pygame, threading
-import board, node, dijkstra
+import board, node, dijkstra, a_star
 
 # todo: reset grid function
 
@@ -11,6 +11,7 @@ if __name__ == '__main__':
     white = (255, 255, 255)
     start_location = [5, 5]
     end_location = [10, 10]
+    solution_algorithm = 'dijkstra'
 
     pygame.init()
     gameDisplay = pygame.display.set_mode((display_width, display_height))
@@ -84,12 +85,25 @@ if __name__ == '__main__':
                     node_clicked.reset_grid_type()
                     game_board.move_end_node(node_hovered.row, node_hovered.column)
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    # reset the solution portion of the board
+                if event.key == pygame.K_d:
+                    solution_algorithm = 'dijkstra'
 
-                    # solve the grid on a separate thread to allow for live GUI updates
-                    x = threading.Thread(target=dijkstra.dijkstra_solver, args=(game_board.board[
-                        game_board.start_location[0]][game_board.start_location[1]], game_board))
+                if event.key == pygame.K_a:
+                    solution_algorithm = 'a_star'
+
+                if event.key == pygame.K_SPACE:
+
+                    if solution_algorithm == 'a_star':
+                        # solve the grid on a separate thread to allow for live GUI updates
+                        x = threading.Thread(target=a_star.a_star_solver, args=(game_board.board[
+                            game_board.start_location[0]][game_board.start_location[1]], game_board.board[
+                                                game_board.end_location[0]][game_board.end_location[1]], game_board))
+                    elif solution_algorithm == 'dijkstra':
+                        # default to dijkstra
+                        # solve the grid on a separate thread to allow for live GUI updates
+                        x = threading.Thread(target=dijkstra.dijkstra_solver, args=(game_board.board[
+                            game_board.start_location[0]][game_board.start_location[1]], game_board))
+
                     x.start()
                 if event.key == pygame.K_r:
                     game_board.reset_solution()

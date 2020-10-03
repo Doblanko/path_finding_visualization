@@ -22,10 +22,17 @@ class Node:
         self.is_slow_path = False
         self.weight = 1
 
+        # A* search parameters
+        # f is the sum of distance (to the start node) and a heuristic of the distance to the finish (h)
+        self.a_star_f = math.inf
+        self.a_star_h = math.inf
+
     def set_start_node(self):
         self.is_start_node = True
         self.set_distance(0)
         self.set_color(green)
+        self.set_a_star_h(0)
+        self.set_a_star_f()
 
     def set_end_node(self):
         self.is_end_node = True
@@ -73,6 +80,12 @@ class Node:
             self.set_color(brown)
         elif self.is_wall == False:
             self.set_color(white)
+
+    def set_a_star_f(self):
+        self.a_star_f = self.distance + self.a_star_h
+
+    def set_a_star_h(self, h):
+        self.a_star_h = h
 
     @classmethod
     def get_grid_location(cls, game_board, mouse_position):

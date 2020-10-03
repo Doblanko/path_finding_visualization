@@ -5,8 +5,8 @@ grey = (211, 211, 211)
 blue = (0, 0, 255)
 grey_brown = (168, 147, 125)
 
-def dijkstra_solver(start_node, game_board):
-    """Solve for the optimal path using dijkstra's algorithm"""
+def a_star_solver(start_node, end_node, game_board):
+    """Solve for the optimal path using A* algorithm"""
     # form priority queue
     # first digit = distance, second = order added, third = node
     # need order added to avoid nodes with same distance
@@ -15,13 +15,12 @@ def dijkstra_solver(start_node, game_board):
     solution_found = False
 
     while len(pq) > 0 and not solution_found:
-        current_distance, current_order, current_node = heapq.heappop(pq)
+        current_a_star_f, current_order, current_node = heapq.heappop(pq)
 
         # Nodes can get added to the priority queue multiple times. We only
         # process a vertex the first time we remove it from the priority queue.
-        # todo: does this even make sense? they will always be the same
-        if current_distance > current_node.distance:
-            continue
+        #if current_a_star_f > current_node.a_star_f:
+            #continue
 
         for i in [-1, 0, 1]:
             # stop if solution found
@@ -61,14 +60,19 @@ def dijkstra_solver(start_node, game_board):
 
                 new_distance = current_node.distance + neighbor_node.weight
 
+                new_a_star_h = abs(neighbor_node.row - end_node.row) + abs(neighbor_node.column - end_node.column)
+
+                new_a_star_f = new_distance + new_a_star_h
                 # Only consider this new path if it's better than any path we've
                 # already found.
-                if new_distance < neighbor_node.distance:
+                if new_a_star_f < neighbor_node.a_star_f:
                     neighbor_node.set_distance(new_distance)
+                    neighbor_node.set_a_star_h(new_a_star_h)
+                    neighbor_node.set_a_star_f()
                     neighbor_node.set_visited_from(current_node)
 
                     order_added += 1
-                    heapq.heappush(pq, (neighbor_node.distance, order_added, neighbor_node))
+                    heapq.heappush(pq, (neighbor_node.a_star_f, order_added, neighbor_node))
 
                     # check if you found the solution
                     if neighbor_node.is_end_node:
