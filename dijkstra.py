@@ -24,25 +24,14 @@ def dijkstra_solver(start_node, game_board):
             continue
 
         for i in [-1, 0, 1]:
-            # stop if solution found
-            if solution_found == True:
-                break
 
-            # don't go out of range
-            if not -1 < (current_node.row + i) < game_board.rows:
-                continue
+            if solution_found: break
 
             for j in [-1, 0, 1]:
-                # stop if solution found
-                if solution_found == True:
-                    break
 
-                # skip diagonals
-                if abs(i) + abs(j) != 1:
-                    continue
-                # don't go out of range
-                if not -1 < (current_node.column + j) < game_board.columns:
-                    continue
+                if solution_found: break
+
+                if grid_check(i, j, current_node, game_board): continue
 
                 # define the node being looked at as neighbor node for simplicity
                 neighbor_node = game_board.board[current_node.row + i][current_node.column + j]
@@ -79,12 +68,28 @@ def dijkstra_solver(start_node, game_board):
                         solution_found = True
                         break
 
-
                 # change the node to the searched color
-                if neighbor_node.is_start_node == False:
-                    if neighbor_node.is_slow_path:
-                        neighbor_node.set_color(grey_brown)
-                    else:
-                        neighbor_node.set_color(grey)
-                else:
-                    neighbor_node.set_color(neighbor_node_old_color)
+                change_color_searched(neighbor_node, neighbor_node_old_color)
+
+def grid_check(i, j, current_node, game_board):
+
+    # don't go out of i range
+    if not -1 < (current_node.row + i) < game_board.rows: return True
+
+    # skip diagonals
+    if abs(i) + abs(j) != 1: return True
+
+    # don't go out of j range
+    if not -1 < (current_node.column + j) < game_board.columns: return True
+
+    return False
+
+
+def change_color_searched(neighbor_node, neighbor_node_old_color):
+    if neighbor_node.is_start_node == False:
+        if neighbor_node.is_slow_path:
+            neighbor_node.set_color(grey_brown)
+        else:
+            neighbor_node.set_color(grey)
+    else:
+        neighbor_node.set_color(neighbor_node_old_color)

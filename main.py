@@ -1,8 +1,6 @@
 import pygame, threading
 import board, node, dijkstra, a_star
 
-# todo: reset grid function
-
 if __name__ == '__main__':
     display_width = 700
     display_height = 500
