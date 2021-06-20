@@ -28,6 +28,7 @@ if __name__ == '__main__':
         for event in pygame.event.get():
 
             # drag and drop function
+            # also adds walls and slow paths
             if event.type == pygame.MOUSEBUTTONDOWN:
 
                 mouse_position = pygame.mouse.get_pos()
