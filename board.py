@@ -92,3 +92,27 @@ class Board():
         # reset properties of start and end node by re-initializing them as start and end nodes
         self.board[self.start_location[0]][self.start_location[1]].set_start_node()
         self.board[self.end_location[0]][self.end_location[1]].set_end_node()
+
+    def grid_check(self, i, j, current_node):
+        """Check if gridpoint is a valid next location (in bounds and not diagonal)"""
+
+        # don't go out of i range
+        if not -1 < (current_node.row + i) < self.rows: return True
+
+        # skip diagonals
+        if abs(i) + abs(j) != 1: return True
+
+        # don't go out of j range
+        if not -1 < (current_node.column + j) < self.columns: return True
+
+        return False
+
+    def check_solution_found(self, neighbor_node, neighbor_node_old_color):
+        """Check if the solution is found."""
+
+        if neighbor_node.is_end_node:
+            neighbor_node.set_color(neighbor_node_old_color)
+            self.draw_solution()
+            return True
+
+        return False

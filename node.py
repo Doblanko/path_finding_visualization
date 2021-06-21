@@ -6,6 +6,9 @@ brown = (139, 69, 19)
 green = (0, 255, 0)
 red = (255, 0, 0)
 yellow = (255, 255, 0)
+grey = (211, 211, 211)
+blue = (0, 0, 255)
+grey_brown = (168, 147, 125)
 
 class Node:
     def __init__(self, row, column, size):
@@ -88,6 +91,15 @@ class Node:
 
     def set_a_star_h(self, h):
         self.a_star_h = h
+
+    def change_color_searched(self, neighbor_node_old_color):
+        if self.is_start_node == False:
+            if self.is_slow_path:
+                self.set_color(grey_brown)
+            else:
+                self.set_color(grey)
+        else:
+            self.set_color(neighbor_node_old_color)
 
     @classmethod
     def get_grid_location(cls, game_board, mouse_position):

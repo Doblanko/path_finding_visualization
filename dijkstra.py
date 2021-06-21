@@ -1,9 +1,7 @@
 import pygame, heapq, math, time
-import node
+import node, board
 
-grey = (211, 211, 211)
 blue = (0, 0, 255)
-grey_brown = (168, 147, 125)
 
 def dijkstra_solver(start_node, game_board):
     """Solve for the optimal path using dijkstra's algorithm"""
@@ -25,16 +23,13 @@ def dijkstra_solver(start_node, game_board):
 
         for i in [-1, 0, 1]:
 
-            if solution_found:
-                break
+            if solution_found: break
 
             for j in [-1, 0, 1]:
 
-                if solution_found:
-                    break
+                if solution_found: break
 
-                if grid_check(i, j, current_node, game_board):
-                    continue
+                if game_board.grid_check(i, j, current_node): continue
 
                 # define the node being looked at as neighbor node for simplicity
                 neighbor_node = game_board.board[current_node.row + i][current_node.column + j]
@@ -53,35 +48,11 @@ def dijkstra_solver(start_node, game_board):
 
                 (pq, order_added) = path_check(current_node, neighbor_node, pq, order_added)
 
-                if check_solution_found(neighbor_node, neighbor_node_old_color, game_board):
+                if game_board.check_solution_found(neighbor_node, neighbor_node_old_color):
                     solution_found = True
                     break
 
-                change_color_searched(neighbor_node, neighbor_node_old_color)
-
-def grid_check(i, j, current_node, game_board):
-    """Check if the gridpoint is a valid next location (in bounds and not diagonal)."""
-
-    # don't go out of i range
-    if not -1 < (current_node.row + i) < game_board.rows: return True
-
-    # skip diagonals
-    if abs(i) + abs(j) != 1: return True
-
-    # don't go out of j range
-    if not -1 < (current_node.column + j) < game_board.columns: return True
-
-    return False
-
-
-def change_color_searched(neighbor_node, neighbor_node_old_color):
-    if neighbor_node.is_start_node == False:
-        if neighbor_node.is_slow_path:
-            neighbor_node.set_color(grey_brown)
-        else:
-            neighbor_node.set_color(grey)
-    else:
-        neighbor_node.set_color(neighbor_node_old_color)
+                neighbor_node.change_color_searched(neighbor_node_old_color)
 
 
 def path_check(current_node, neighbor_node, pq, order_added):
@@ -97,13 +68,3 @@ def path_check(current_node, neighbor_node, pq, order_added):
         heapq.heappush(pq, (neighbor_node.distance, order_added, neighbor_node))
 
     return(pq, order_added)
-
-def check_solution_found(neighbor_node, neighbor_node_old_color, game_board):
-    """Check if the solution is found."""
-
-    if neighbor_node.is_end_node:
-        neighbor_node.set_color(neighbor_node_old_color)
-        game_board.draw_solution()
-        return True
-
-    return False

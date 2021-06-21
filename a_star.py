@@ -1,5 +1,5 @@
 import pygame, heapq, math, time
-import node
+import node, board
 
 grey = (211, 211, 211)
 blue = (0, 0, 255)
@@ -24,24 +24,16 @@ def a_star_solver(start_node, end_node, game_board):
 
         for i in [-1, 0, 1]:
             # stop if solution found
-            if solution_found == True:
-                break
+            if solution_found: break
 
             # don't go out of range
-            if not -1 < (current_node.row + i) < game_board.rows:
-                continue
+            if not -1 < (current_node.row + i) < game_board.rows: continue
 
             for j in [-1, 0, 1]:
                 # stop if solution found
-                if solution_found == True:
-                    break
+                if solution_found: break
 
-                # skip diagonals
-                if abs(i) + abs(j) != 1:
-                    continue
-                # don't go out of range
-                if not -1 < (current_node.column + j) < game_board.columns:
-                    continue
+                if game_board.grid_check(i, j, current_node): continue
 
                 # define the node being looked at as neighbor node for simplicity
                 neighbor_node = game_board.board[current_node.row + i][current_node.column + j]
@@ -58,37 +50,29 @@ def a_star_solver(start_node, end_node, game_board):
                     neighbor_node.set_color(neighbor_node_old_color)
                     continue
 
-                new_distance = current_node.distance + neighbor_node.weight
+                (pq, order_added) = path_check(current_node, neighbor_node, end_node, pq, order_added)
 
-                new_a_star_h = abs(neighbor_node.row - end_node.row) + abs(neighbor_node.column - end_node.column)
-
-                new_a_star_f = new_distance + new_a_star_h
-                # Only consider this new path if it's better than any path we've
-                # already found.
-                if new_a_star_f < neighbor_node.a_star_f:
-                    neighbor_node.set_distance(new_distance)
-                    neighbor_node.set_a_star_h(new_a_star_h)
-                    neighbor_node.set_a_star_f()
-                    neighbor_node.set_visited_from(current_node)
-
-                    order_added += 1
-                    heapq.heappush(pq, (neighbor_node.a_star_f, order_added, neighbor_node))
-
-                    # check if you found the solution
-                    if neighbor_node.is_end_node:
-                        neighbor_node.set_color(neighbor_node_old_color)
-                        game_board.draw_solution()
-
-                        # break out of the loops
-                        solution_found = True
-                        break
-
+                if game_board.check_solution_found(neighbor_node, neighbor_node_old_color):
+                    solution_found = True
+                    break
 
                 # change the node to the searched color
-                if neighbor_node.is_start_node == False:
-                    if neighbor_node.is_slow_path:
-                        neighbor_node.set_color(grey_brown)
-                    else:
-                        neighbor_node.set_color(grey)
-                else:
-                    neighbor_node.set_color(neighbor_node_old_color)
+                neighbor_node.change_color_searched(neighbor_node_old_color)
+
+def path_check(current_node, neighbor_node, end_node, pq, order_added):
+    """Check if the new path to the node is shorter than any previous path"""
+
+    new_distance = current_node.distance + neighbor_node.weight
+    new_a_star_h = abs(neighbor_node.row - end_node.row) + abs(neighbor_node.column - end_node.column)
+    new_a_star_f = new_distance + new_a_star_h
+
+    if new_a_star_f < neighbor_node.a_star_f:
+        neighbor_node.set_distance(new_distance)
+        neighbor_node.set_a_star_h(new_a_star_h)
+        neighbor_node.set_a_star_f()
+        neighbor_node.set_visited_from(current_node)
+
+        order_added += 1
+        heapq.heappush(pq, (neighbor_node.a_star_f, order_added, neighbor_node))
+
+    return(pq, order_added)
