@@ -105,7 +105,9 @@ if __name__ == '__main__':
 
                     x.start()
                 if event.key == pygame.K_r:
-                    game_board.reset_solution()
+                    game_board.reset_solution(False)
+                if event.key == pygame.K_c:
+                    game_board.reset_solution(True)
 
 
             if event.type == pygame.QUIT:

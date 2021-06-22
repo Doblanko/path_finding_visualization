@@ -1,5 +1,5 @@
-import math
-import pygame
+import math, pygame
+
 white = (255, 255, 255)
 black = (0, 0, 0)
 brown = (139, 69, 19)
@@ -15,12 +15,12 @@ class Node:
         self.row = row
         self.column = column
         self.size = size
-        self.set_color(white)
+        self.color = white
         self.is_start_node = False
         self.is_end_node = False
-        self.set_distance(math.inf)
+        self.distance = math.inf
         self.visited = False
-        self.set_visited_from(None)
+        self.visited_from = None
         self.is_wall = False
         self.is_slow_path = False
         self.weight = 1
@@ -76,14 +76,21 @@ class Node:
         self.set_color(white)
         self.weight = 1
 
-    def reset_solution(self):
+    def reset_solution(self, clear_all):
         self.set_visited_from(None)
         self.set_distance(math.inf)
         self.set_a_star_h(math.inf)
         self.set_a_star_f()
-        if self.is_slow_path:
+        if self.is_slow_path and clear_all:
+            self.set_color(white)
+            self.is_slow_path = False
+        elif self.is_wall and clear_all:
+            self.set_color(white)
+            self.is_wall = False
+        elif self.is_slow_path:
             self.set_color(brown)
-        elif self.is_wall == False:
+        elif not self.is_wall:
+            # clears the yellow solution path
             self.set_color(white)
 
     def set_a_star_f(self):
@@ -93,7 +100,7 @@ class Node:
         self.a_star_h = h
 
     def change_color_searched(self, neighbor_node_old_color):
-        if self.is_start_node == False:
+        if not self.is_start_node:
             if self.is_slow_path:
                 self.set_color(grey_brown)
             else:

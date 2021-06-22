@@ -1,5 +1,6 @@
 import pygame, time
-import main, node
+import node
+
 grey = (128, 128, 128)
 yellow = (255, 255, 0)
 brown_yellow = (204, 153, 102)
@@ -84,18 +85,18 @@ class Board():
 
             time.sleep(0.05)
 
-    def reset_solution(self):
-        """Resets the solution part of the board so you can re-solve"""
+    def reset_solution(self, clear_all):
+        """Resets the solution part of the board so you can re-solve or clears entire board"""
         for i in range(self.rows):
             for j in range(self.columns):
-                self.board[i][j].reset_solution()
+                self.board[i][j].reset_solution(clear_all)
         # reset properties of start and end node by re-initializing them as start and end nodes
         self.board[self.start_location[0]][self.start_location[1]].set_start_node()
         self.board[self.end_location[0]][self.end_location[1]].set_end_node()
 
+
     def grid_check(self, i, j, current_node):
         """Check if gridpoint is a valid next location (in bounds and not diagonal)"""
-
         # don't go out of i range
         if not -1 < (current_node.row + i) < self.rows: return True
 
@@ -109,7 +110,6 @@ class Board():
 
     def check_solution_found(self, neighbor_node, neighbor_node_old_color):
         """Check if the solution is found."""
-
         if neighbor_node.is_end_node:
             neighbor_node.set_color(neighbor_node_old_color)
             self.draw_solution()

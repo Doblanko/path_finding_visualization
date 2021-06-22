@@ -1,9 +1,6 @@
-import pygame, heapq, math, time
-import node, board
+import heapq, time
 
-grey = (211, 211, 211)
 blue = (0, 0, 255)
-grey_brown = (168, 147, 125)
 
 def a_star_solver(start_node, end_node, game_board):
     """Solve for the optimal path using A* algorithm"""
@@ -19,8 +16,6 @@ def a_star_solver(start_node, end_node, game_board):
 
         # Nodes can get added to the priority queue multiple times. We only
         # process a vertex the first time we remove it from the priority queue.
-        #if current_a_star_f > current_node.a_star_f:
-            #continue
 
         for i in [-1, 0, 1]:
             # stop if solution found

@@ -1,5 +1,4 @@
-import pygame, heapq, math, time
-import node, board
+import heapq,  time
 
 blue = (0, 0, 255)
 
